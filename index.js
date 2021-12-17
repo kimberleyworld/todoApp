@@ -9,17 +9,25 @@ const displayPage = () => {
             let res = ''
             items.forEach(function (item){
                 console.log(item._id)
-                res += '<label class = "list-group-item" >' +
-                    '<input class="form-check-input me-1 uncompleted" type="checkbox" value="" data-id="' + item._id + '">' + item.item +
-                    '<button class="delete" data-id="' + item._id + '">delete</button></label>'
+                res += '<div class="row">' +
+                    '<div class="col">' +
+                    '<ul class = "list-group list-group-flush">' +
+                    '<li class="list-group-item item">' + item.item + '</li>' +
+                    '</ul>' +
+                    '</div>' +
+                    '<div class="col">' +
+                    '<button type="button" class="delete btn btn-outline-danger btn-sm" data-id="' + item._id + '">' +
+                    'delete</button>' +
+                    '<button type="button" class="uncompleted btn btn-outline-secondary btn-sm" data-id="' + item._id + '">complete</button>' +
+                    '</div>' +
+                    '</div>'
             })
             document.getElementById('itemList').innerHTML = res
         })
         .then(function(){
            let items = document.querySelectorAll('.uncompleted')
             items.forEach(function (item){
-                item.addEventListener('change', (e) => {
-                    if (e.target.checked) {
+                item.addEventListener('click', (e) => {
                         console.log(e.target.dataset.id)
                         let id = e.target.dataset.id
                         fetch('http://127.0.0.1:3000/markAsComplete/' + id, {
@@ -28,25 +36,31 @@ const displayPage = () => {
                             "Content-Type": "application/json"
                              }
                         }).then(() => displayPage())
-                    } else {
-                        console.log('not checked')
-                    }
                     displayPage()
                 })
             })
-        })
+        }) .then(() => {
 
-
-
+// try and remove checkboxes and make colerful
+        // add in boarder box 
     fetch('http://localhost:3000/completed')
         .then(data => data.json())
         .then(function(data) {
             let items = data.todolist
             let res = ''
             items.forEach(function (item){
-                res += '<label class = "list-group-item">' +
-                    '<input class="form-check-input me-1 completed" type="checkbox" value="" data-id="' + item._id + '">' + item.item +
-                    '<button class="delete" data-id="' + item._id + '">delete</button></label>'
+                res += '<div class="row">' +
+                           '<div class="col">' +
+                                '<ul class = "list-group list-group-flush">' +
+                                  '<li class="list-group-item item">' + item.item + '</li>' +
+                                '</ul>' +
+                            '</div>' +
+                            '<div class="col">' +
+                                '<button type="button" class="delete btn btn-outline-danger btn-sm" data-id="' + item._id + '">' +
+                                    'delete</button>' +
+                                    '<button type="button" class="completed btn btn-outline-secondary btn-sm"data-id="' + item._id + '">redo</button>' +
+                            '</div>' +
+                    '</div>'
             })
             document.getElementById('completedItemList').innerHTML = res
         })
@@ -70,6 +84,7 @@ const displayPage = () => {
             deleteButtons.forEach(function (deleteButton){
                 deleteButton.addEventListener('click', (e)=>{
                     console.log(e.target.dataset.id)
+                    console.log('banana')
                     let id = e.target.dataset.id
                     fetch('http://127.0.0.1:3000/remove/' + id, {
                         method: 'DELETE',
@@ -80,7 +95,7 @@ const displayPage = () => {
                 })
             })
         })
-
+    })
 
 let form = document.getElementById('addNewForm')
     form.addEventListener('submit', function (e){
